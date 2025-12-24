@@ -88,12 +88,12 @@
   <div class="wrap">
     <div class="card">
       <h1>Pembuat Kupon <span class="badge">TPG</span></h1>
-      <p>Sender isi data Telegram + <b>Kode Klaim</b> → pilih <b>Design</b> → sistem bikin <b>gambar kupon (PNG)</b> yang bisa diunduh dan dikirim ke receiver.</p>
-
+      <p>Silahkan lengkapi form dibawah ini.<p>
+        
       <div class="grid">
         <div>
           <label for="sender">Username Telegram sender</label>
-          <input id="sender" placeholder="contoh: dinijanuari23 (tanpa @ boleh)" autocomplete="off" />
+          <input id="sender" placeholder="contoh: tfairy (tanpa @ boleh)" autocomplete="off" />
         </div>
         <div>
           <label for="receiver">Username Telegram receiver</label>
@@ -103,12 +103,12 @@
 
       <div class="grid">
         <div>
-          <label for="nominal">Nominal hadiah</label>
-          <input id="nominal" placeholder="contoh: 50k / 50000 / 50.000" inputmode="decimal" autocomplete="off" />
+          <label for="nominal">Nominal robux</label>
+          <input id="nominal" placeholder="contoh: 80 / 500 / 1000" inputmode="decimal" autocomplete="off" />
         </div>
         <div>
           <label for="claimCode">Kode Klaim (diisi sender)</label>
-          <input id="claimCode" placeholder="contoh: TPG-1234-X7QK" autocomplete="off" />
+          <input id="claimCode" placeholder="Buat keyword khusus untuk claim hadiah." autocomplete="off" />
         </div>
       </div>
 
@@ -116,8 +116,8 @@
         <div>
           <label for="theme">Pilih design kupon</label>
           <select id="theme">
-            <option value="purple">Purple (948FB8, D5D3E3, 564D84, 1D1A2D, F0EFF6)</option>
-            <option value="blue">Blue (EDF2F8, C5D5E8, 3C6496, 497AB6, 2F4E75, 142233)</option>
+            <option value="purple">Purple</option>
+            <option value="blue">Blue</option>
           </select>
           <div class="swatches" id="swatches"></div>
         </div>
@@ -129,7 +129,7 @@
             <option value="minimal">Minimal Clean</option>
           </select>
           <div class="note" style="margin-top:8px;">
-            <b>Validasi Kode Klaim:</b> 6–20 karakter, hanya huruf/angka/strip (-), otomatis jadi huruf besar.
+            <b>Catatan Kode Klaim:</b> 6–20 karakter, hanya huruf/angka, auto kapital.
           </div>
         </div>
       </div>
