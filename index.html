@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembuat Kupon TPG</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body { margin: 0; background: #0b1220; color: #e8eefc; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 60px; }
+    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 18px; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    p { margin: 0 0 14px; color: rgba(232,238,252,0.82); line-height: 1.45; }
+    label { display: block; font-size: 13px; color: rgba(232,238,252,0.78); margin: 10px 0 6px; }
+    input { width: 100%; padding: 12px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(0,0,0,0.25); color: #e8eefc; outline: none; }
+    input:focus { border-color: rgba(120,170,255,0.7); box-shadow: 0 0 0 3px rgba(120,170,255,0.18); }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .btnrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+    button { cursor: pointer; border: 0; padding: 11px 14px; border-radius: 12px; font-weight: 700; }
+    .primary { background: #4c8dff; color: #081024; }
+    .ghost { background: rgba(255,255,255,0.10); color: #e8eefc; border: 1px solid rgba(255,255,255,0.14); }
+    .muted { font-size: 12px; color: rgba(232,238,252,0.70); margin-top: 10px; }
+    .out { margin-top: 18px; display: none; }
+    .status { margin: 10px 0 0; font-size: 13px; }
+    .ok { color: #a7ffcd; }
+    .err { color: #ffb3b3; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 860px) { .row { grid-template-columns: 1fr 1fr; align-items: start; } }
+    .previewCard { background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 12px; }
+    canvas { width: 100%; height: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.2); }
+    textarea { width: 100%; min-height: 150px; resize: vertical; padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.16); background: rgba(0,0,0,0.25); color: #e8eefc; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(76,141,255,0.18); border: 1px solid rgba(76,141,255,0.35); font-size: 12px; margin-left: 8px; }
+    .note { margin-top: 10px; font-size: 13px; line-height: 1.45; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.18); border-radius: 14px; padding: 12px; }
+    .kv { display:flex; gap:10px; flex-wrap:wrap; }
+    .kv > div { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px; }
+    .kv b { display:block; font-size:12px; color: rgba(232,238,252,0.72); margin-bottom: 2px; }
+    .kv span { font-weight:800; }
+    code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Pembuat Kupon <span class="badge">TPG</span></h1>
+      <p>Sender isi data Telegram + <b>Kode Klaim (custom)</b> → sistem bikin <b>gambar kupon (PNG)</b> yang bisa diunduh.</p>
+
+      <div class="grid">
+        <div>
+          <label for="sender">Username Telegram sender</label>
+          <input id="sender" placeholder="contoh: dinijanuari23 (tanpa @ boleh)" autocomplete="off" />
+        </div>
+        <div>
+          <label for="receiver">Username Telegram receiver</label>
+          <input id="receiver" placeholder="contoh: receiver_telegram" autocomplete="off" />
+        </div>
+      </div>
+
+      <label for="nominal">Nominal hadiah</label>
+      <input id="nominal" placeholder="contoh: 50k / 50000 / 50.000" inputmode="decimal" autocomplete="off" />
+
+      <label for="claimCode">Kode Klaim (diisi sender)</label>
+      <input id="claimCode" placeholder="contoh: TPG-1234-X7QK (bebas sesuai kebutuhan)" autocomplete="off" />
+
+      <div class="btnrow">
+        <button class="primary" id="btnGenerate">Buat Kupon</button>
+        <button class="ghost" id="btnReset" type="button">Reset</button>
+      </div>
+
+      <div class="note">
+        <b>Saran format biar rapi:</b> <code>TPG-1234-ABCD</code> (tapi kamu bisa pakai format lain juga).<br/>
+        <b>Validasi default:</b> 6–20 karakter, hanya huruf/angka/strip (-), otomatis jadi huruf besar.
+      </div>
+
+      <div class="out" id="outputWrap">
+        <div class="status" id="status"></div>
+
+        <div class="row">
+          <div class="previewCard">
+            <label>Preview gambar kupon</label>
+            <canvas id="couponCanvas" width="1200" height="700"></canvas>
+
+            <div class="btnrow">
+              <button class="primary" id="btnDownloadPng">Download Kupon (PNG)</button>
+              <button class="ghost" id="btnCopyCode">Copy Kode Klaim</button>
+            </div>
+
+            <div class="kv" style="margin-top:10px;">
+              <div><b>Kode Klaim</b><span id="codeLabel">-</span></div>
+              <div><b>Tanggal</b><span id="dateLabel">-</span></div>
+            </div>
+          </div>
+
+          <div class="previewCard">
+            <label for="couponText">Teks pendamping (opsional)</label>
+            <textarea id="couponText" readonly></textarea>
+
+            <div class="btnrow">
+              <button class="ghost" id="btnCopyText">Copy Teks</button>
+              <button class="ghost" id="btnDownloadTxt">Download .txt</button>
+            </div>
+
+            <p class="muted">Receiver klaim kupon ke bot pakai Kode Klaim. Sender tidak boleh meminta data login receiver.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function sanitizeTelegramUsername(raw) {
+      let s = (raw || "").trim();
+      if (s.startsWith("@")) s = s.slice(1);
+      return s.replace(/\s+/g, "");
+    }
+
+    function normalizeNominal(raw) {
+      return (raw || "").trim().replace(/\s+/g, " ");
+    }
+
+    function normalizeClaimCode(raw) {
+      return (raw || "").trim().toUpperCase().replace(/\s+/g, "");
+    }
+
+    function isValidClaimCode(code) {
+      // 6-20 chars, only A-Z 0-9 and dash
+      if (code.length < 6 || code.length > 20) return false;
+      return /^[A-Z0-9-]+$/.test(code);
+    }
+
+    function formatDateId(d) {
+      return d.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    function buildCouponText({ claimCode, sender, receiver, nominal, createdAt }) {
+      return [
+`🎟️ KUPON HADIAH TPG`,
+`Kode Klaim: ${claimCode}`,
+`Dibuat: ${createdAt}`,
+``,
+`Data:`,
+`- Telegram sender: @${sender}`,
+`- Telegram receiver: @${receiver}`,
+`- Nominal hadiah: ${nominal}`,
+``,
+`Setelah kupon dibuat:`,
+`- Sender bertanggung jawab untuk memberikan kupon kepada receiver.`,
+``,
+`Sender memahami bahwa:`,
+`- Kupon bukan saldo/top up langsung`,
+`- Hadiah baru dapat diproses setelah receiver mengklaim kupon ke bot`,
+``,
+`Sender dilarang:`,
+`- Meminta data login receiver`,
+`- Menyalahgunakan kupon untuk menekan atau memaksa receiver`,
+``,
+`Instruksi klaim (receiver):`,
+`- Kirim ke bot: /claim ${claimCode}`,
+      ].join("\n");
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      let line = "";
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line.trim(), x, y);
+          line = words[n] + " ";
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), x, y);
+      return y;
+    }
+
+    function drawCoupon({ claimCode, sender, receiver, nominal, createdAt }) {
+      const canvas = $("couponCanvas");
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // BG gradient
+      const grad = ctx.createLinearGradient(0, 0, W, H);
+      grad.addColorStop(0, "#0e1a33");
+      grad.addColorStop(1, "#0a1020");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Glow
+      ctx.globalAlpha = 0.25;
+      ctx.beginPath();
+      ctx.arc(W * 0.80, H * 0.20, 240, 0, Math.PI * 2);
+      ctx.fillStyle = "#4c8dff";
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Card
+      const pad = 60;
+      const cardX = pad, cardY = pad, cardW = W - pad * 2, cardH = H - pad * 2;
+
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = "#000";
+      ctx.roundRect(cardX + 8, cardY + 10, cardW, cardH, 26);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = "rgba(255,255,255,0.07)";
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 2;
+      ctx.roundRect(cardX, cardY, cardW, cardH, 26);
+      ctx.fill();
+      ctx.stroke();
+
+      // Header strip
+      ctx.fillStyle = "rgba(76,141,255,0.18)";
+      ctx.roundRect(cardX, cardY, cardW, 120, 26);
+      ctx.fill();
+
+      // Title
+      ctx.fillStyle = "#e8eefc";
+      ctx.font = "800 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("KUPON HADIAH TPG", cardX + 36, cardY + 74);
+
+      ctx.font = "600 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(232,238,252,0.86)";
+      ctx.fillText("Kirim gambar ini ke receiver via Telegram", cardX + 36, cardY + 106);
+
+      // Claim code box
+      const boxX = cardX + 36;
+      const boxY = cardY + 150;
+      const boxW = cardW - 72;
+      const boxH = 120;
+
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 2;
+      ctx.roundRect(boxX, boxY, boxW, boxH, 18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#a7ffcd";
+      ctx.font = "900 56px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
+      ctx.fillText(claimCode, boxX + 26, boxY + 78);
+
+      ctx.fillStyle = "rgba(232,238,252,0.78)";
+      ctx.font = "700 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Kode Klaim (untuk klaim ke bot)", boxX + 26, boxY + 108);
+
+      // Details
+      const leftX = cardX + 36;
+      let y = boxY + boxH + 50;
+
+      ctx.fillStyle = "#e8eefc";
+      ctx.font = "800 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Detail", leftX, y);
+
+      ctx.font = "600 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(232,238,252,0.88)";
+      y += 48; ctx.fillText(`Sender   : @${sender}`, leftX, y);
+      y += 34; ctx.fillText(`Receiver : @${receiver}`, leftX, y);
+      y += 34; ctx.fillText(`Nominal  : ${nominal}`, leftX, y);
+
+      // Divider
+      y += 26;
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(leftX, y);
+      ctx.lineTo(cardX + cardW - 36, y);
+      ctx.stroke();
+
+      // Terms
+      y += 36;
+      ctx.fillStyle = "rgba(232,238,252,0.82)";
+      ctx.font = "600 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+
+      const t1 = "• Kupon bukan saldo/top up langsung. Hadiah diproses setelah receiver klaim ke bot.";
+      const t2 = "• Dilarang meminta data login receiver, atau memakai kupon untuk menekan/memaksa receiver.";
+      const t3 = `• Dibuat: ${createdAt}`;
+
+      y = wrapText(ctx, t1, leftX, y, cardW - 72, 26) + 30;
+      y = wrapText(ctx, t2, leftX, y, cardW - 72, 26) + 30;
+      wrapText(ctx, t3, leftX, y, cardW - 72, 26);
+
+      // Footer
+      const tag = "TPG Coupon Generator";
+      ctx.font = "700 16px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
+      ctx.fillStyle = "rgba(232,238,252,0.55)";
+      ctx.fillText(tag, cardX + cardW - 36 - ctx.measureText(tag).width, cardY + cardH - 28);
+    }
+
+    function downloadPng(canvas, filename) {
+      const a = document.createElement("a");
+      a.download = filename;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+
+    function downloadTxt(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // roundRect polyfill
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        const radius = typeof r === "number" ? { tl: r, tr: r, br: r, bl: r } : r;
+        this.beginPath();
+        this.moveTo(x + radius.tl, y);
+        this.lineTo(x + w - radius.tr, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + radius.tr);
+        this.lineTo(x + w, y + h - radius.br);
+        this.quadraticCurveTo(x + w, y + h, x + w - radius.br, y + h);
+        this.lineTo(x + radius.bl, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - radius.bl);
+        this.lineTo(x, y + radius.tl);
+        this.quadraticCurveTo(x, y, x + radius.tl, y);
+        this.closePath();
+        return this;
+      };
+    }
+
+    let current = null;
+
+    $("btnGenerate").addEventListener("click", () => {
+      const sender = sanitizeTelegramUsername($("sender").value);
+      const receiver = sanitizeTelegramUsername($("receiver").value);
+      const nominal = normalizeNominal($("nominal").value);
+      const claimCode = normalizeClaimCode($("claimCode").value);
+
+      $("outputWrap").style.display = "block";
+
+      if (!sender || !receiver || !nominal || !claimCode) {
+        $("status").innerHTML = `<span class="err">Lengkapi semua field (sender, receiver, nominal, kode klaim).</span>`;
+        current = null;
+        return;
+      }
+
+      if (!isValidClaimCode(claimCode)) {
+        $("status").innerHTML = `<span class="err">Kode klaim tidak valid.</span> Pakai 6–20 karakter, hanya huruf/angka/strip (-).`;
+        current = null;
+        return;
+      }
+
+      const createdAt = formatDateId(new Date());
+      current = { claimCode, sender, receiver, nominal, createdAt };
+
+      drawCoupon(current);
+
+      $("status").innerHTML = `<span class="ok">Kupon berhasil dibuat.</span> Kode Klaim: <b>${claimCode}</b>`;
+      $("couponText").value = buildCouponText(current);
+      $("codeLabel").textContent = claimCode;
+      $("dateLabel").textContent = createdAt;
+    });
+
+    $("btnDownloadPng").addEventListener("click", () => {
+      if (!current) return;
+      downloadPng($("couponCanvas"), `${current.claimCode}.png`);
+    });
+
+    $("btnCopyCode").addEventListener("click", async () => {
+      if (!current) return;
+      try {
+        await navigator.clipboard.writeText(current.claimCode);
+        $("status").innerHTML = `<span class="ok">Kode Klaim berhasil di-copy:</span> <b>${current.claimCode}</b>`;
+      } catch {
+        $("status").innerHTML = `<span class="err">Gagal copy otomatis.</span> Salin manual: <b>${current.claimCode}</b>`;
+      }
+    });
+
+    $("btnCopyText").addEventListener("click", async () => {
+      const text = $("couponText").value;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        $("status").innerHTML = `<span class="ok">Teks berhasil di-copy.</span>`;
+      } catch {
+        $("status").innerHTML = `<span class="err">Gagal copy otomatis.</span> Silakan copy manual.`;
+      }
+    });
+
+    $("btnDownloadTxt").addEventListener("click", () => {
+      if (!current) return;
+      downloadTxt(`${current.claimCode}.txt`, $("couponText").value);
+    });
+
+    $("btnReset").addEventListener("click", () => {
+      $("sender").value = "";
+      $("receiver").value = "";
+      $("nominal").value = "";
+      $("claimCode").value = "";
+      $("couponText").value = "";
+      $("status").textContent = "";
+      $("outputWrap").style.display = "none";
+      $("codeLabel").textContent = "-";
+      $("dateLabel").textContent = "-";
+      const ctx = $("couponCanvas").getContext("2d");
+      ctx.clearRect(0, 0, $("couponCanvas").width, $("couponCanvas").height);
+      current = null;
+    });
+  </script>
+</body>
+</html>
