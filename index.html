@@ -107,7 +107,7 @@
           <input id="nominal" placeholder="contoh: 80 / 500 / 1000" inputmode="decimal" autocomplete="off" />
         </div>
         <div>
-          <label for="claimCode">Kode Klaim (diisi sender)</label>
+          <label for="claimCode">Kode Klaim</label>
           <input id="claimCode" placeholder="Buat keyword khusus untuk claim hadiah." autocomplete="off" />
         </div>
       </div>
@@ -257,21 +257,11 @@
 `Data:`,
 `- Telegram sender: @${sender}`,
 `- Telegram receiver: @${receiver}`,
-`- Nominal hadiah: ${nominal}`,
+`- Nominal yang dihadiahkan: ${nominal}`,
 ``,
 `Setelah kupon dibuat:`,
 `- Sender bertanggung jawab untuk memberikan kupon kepada receiver.`,
-``,
-`Sender memahami bahwa:`,
-`- Kupon bukan saldo/top up langsung`,
-`- Hadiah baru dapat diproses setelah receiver mengklaim kupon ke bot`,
-``,
-`Sender dilarang:`,
-`- Meminta data login receiver`,
-`- Menyalahgunakan kupon untuk menekan atau memaksa receiver`,
-``,
-`Instruksi klaim (receiver):`,
-`- Kirim ke bot: /claim ${claimCode}`,
+`- Receiver claim dengan cara kirim /claim ${claimCode} ke @robuxfessbot`,
       ].join("\n");
     }
 
@@ -431,7 +421,7 @@
 
       ctx.fillStyle = T.subInk;
       ctx.font = "700 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("Kirim gambar ini ke receiver via Telegram", cardX + 36, cardY + 102);
+      ctx.fillText("Kirim gambar ini ke receiver", cardX + 36, cardY + 102);
 
       // Claim Code Box (style differs per layout)
       const boxX = cardX + 36;
@@ -498,8 +488,8 @@
       ctx.fillStyle = T.subInk;
       ctx.font = "750 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
 
-      const t1 = "• Kupon bukan saldo/top up langsung. Hadiah diproses setelah receiver klaim ke bot.";
-      const t2 = "• Dilarang meminta data login receiver, atau memakai kupon untuk menekan/memaksa receiver.";
+      const t1 = "• Hadiah diproses setelah receiver klaim ke @robuxfessbot.";
+      const t2 = "• Maksimal claim dalam 2x24 Jam setelah kupon dibuat.";
       const t3 = `• Dibuat: ${createdAt}`;
 
       y = wrapText(ctx, t1, leftX, y, cardW - 72, 26) + 30;
@@ -507,7 +497,7 @@
       wrapText(ctx, t3, leftX, y, cardW - 72, 26);
 
       // Footer tag
-      const tag = "TPG Coupon";
+      const tag = "TOPUPGRAM";
       ctx.font = "900 16px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
       ctx.fillStyle = "rgba(20,34,51,0.50)";
       if (themeKey === "purple") ctx.fillStyle = "rgba(29,26,45,0.52)";
