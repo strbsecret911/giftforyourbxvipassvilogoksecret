@@ -6,36 +6,81 @@
   <title>Pembuat Kupon TPG</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
     body { margin: 0; background: #0b1220; color: #e8eefc; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 60px; }
+    .wrap { max-width: 1020px; margin: 0 auto; padding: 28px 16px 60px; }
     .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 18px; }
+
     h1 { font-size: 22px; margin: 0 0 10px; }
     p { margin: 0 0 14px; color: rgba(232,238,252,0.82); line-height: 1.45; }
     label { display: block; font-size: 13px; color: rgba(232,238,252,0.78); margin: 10px 0 6px; }
-    input { width: 100%; padding: 12px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(0,0,0,0.25); color: #e8eefc; outline: none; }
-    input:focus { border-color: rgba(120,170,255,0.7); box-shadow: 0 0 0 3px rgba(120,170,255,0.18); }
+
+    input, select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.25);
+      color: #e8eefc;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: rgba(120,170,255,0.7);
+      box-shadow: 0 0 0 3px rgba(120,170,255,0.18);
+    }
+
     .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
     @media (min-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+
     .btnrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
-    button { cursor: pointer; border: 0; padding: 11px 14px; border-radius: 12px; font-weight: 700; }
+    button { cursor: pointer; border: 0; padding: 11px 14px; border-radius: 12px; font-weight: 800; }
     .primary { background: #4c8dff; color: #081024; }
     .ghost { background: rgba(255,255,255,0.10); color: #e8eefc; border: 1px solid rgba(255,255,255,0.14); }
+
     .muted { font-size: 12px; color: rgba(232,238,252,0.70); margin-top: 10px; }
     .out { margin-top: 18px; display: none; }
     .status { margin: 10px 0 0; font-size: 13px; }
     .ok { color: #a7ffcd; }
     .err { color: #ffb3b3; }
+
     .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 860px) { .row { grid-template-columns: 1fr 1fr; align-items: start; } }
+    @media (min-width: 960px) { .row { grid-template-columns: 1.1fr 0.9fr; align-items: start; } }
+
     .previewCard { background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 12px; }
     canvas { width: 100%; height: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.2); }
-    textarea { width: 100%; min-height: 150px; resize: vertical; padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.16); background: rgba(0,0,0,0.25); color: #e8eefc; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.25);
+      color: #e8eefc;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
     .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(76,141,255,0.18); border: 1px solid rgba(76,141,255,0.35); font-size: 12px; margin-left: 8px; }
-    .note { margin-top: 10px; font-size: 13px; line-height: 1.45; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.18); border-radius: 14px; padding: 12px; }
+
+    .note {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.45;
+      background: rgba(255,255,255,0.05);
+      border: 1px dashed rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
     .kv { display:flex; gap:10px; flex-wrap:wrap; }
     .kv > div { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px; }
     .kv b { display:block; font-size:12px; color: rgba(232,238,252,0.72); margin-bottom: 2px; }
-    .kv span { font-weight:800; }
+    .kv span { font-weight:900; }
+
+    .swatches { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+    .sw { width: 18px; height: 18px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.20); }
+
     code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 8px; }
   </style>
 </head>
@@ -43,7 +88,7 @@
   <div class="wrap">
     <div class="card">
       <h1>Pembuat Kupon <span class="badge">TPG</span></h1>
-      <p>Sender isi data Telegram + <b>Kode Klaim (custom)</b> → sistem bikin <b>gambar kupon (PNG)</b> yang bisa diunduh.</p>
+      <p>Sender isi data Telegram + <b>Kode Klaim</b> → pilih <b>Design</b> → sistem bikin <b>gambar kupon (PNG)</b> yang bisa diunduh dan dikirim ke receiver.</p>
 
       <div class="grid">
         <div>
@@ -56,20 +101,42 @@
         </div>
       </div>
 
-      <label for="nominal">Nominal hadiah</label>
-      <input id="nominal" placeholder="contoh: 50k / 50000 / 50.000" inputmode="decimal" autocomplete="off" />
+      <div class="grid">
+        <div>
+          <label for="nominal">Nominal hadiah</label>
+          <input id="nominal" placeholder="contoh: 50k / 50000 / 50.000" inputmode="decimal" autocomplete="off" />
+        </div>
+        <div>
+          <label for="claimCode">Kode Klaim (diisi sender)</label>
+          <input id="claimCode" placeholder="contoh: TPG-1234-X7QK" autocomplete="off" />
+        </div>
+      </div>
 
-      <label for="claimCode">Kode Klaim (diisi sender)</label>
-      <input id="claimCode" placeholder="contoh: TPG-1234-X7QK (bebas sesuai kebutuhan)" autocomplete="off" />
+      <div class="grid">
+        <div>
+          <label for="theme">Pilih design kupon</label>
+          <select id="theme">
+            <option value="purple">Purple (948FB8, D5D3E3, 564D84, 1D1A2D, F0EFF6)</option>
+            <option value="blue">Blue (EDF2F8, C5D5E8, 3C6496, 497AB6, 2F4E75, 142233)</option>
+          </select>
+          <div class="swatches" id="swatches"></div>
+        </div>
+        <div>
+          <label for="layout">Style layout</label>
+          <select id="layout">
+            <option value="classic">Classic Card</option>
+            <option value="ticket">Ticket Cut</option>
+            <option value="minimal">Minimal Clean</option>
+          </select>
+          <div class="note" style="margin-top:8px;">
+            <b>Validasi Kode Klaim:</b> 6–20 karakter, hanya huruf/angka/strip (-), otomatis jadi huruf besar.
+          </div>
+        </div>
+      </div>
 
       <div class="btnrow">
         <button class="primary" id="btnGenerate">Buat Kupon</button>
         <button class="ghost" id="btnReset" type="button">Reset</button>
-      </div>
-
-      <div class="note">
-        <b>Saran format biar rapi:</b> <code>TPG-1234-ABCD</code> (tapi kamu bisa pakai format lain juga).<br/>
-        <b>Validasi default:</b> 6–20 karakter, hanya huruf/angka/strip (-), otomatis jadi huruf besar.
       </div>
 
       <div class="out" id="outputWrap">
@@ -88,6 +155,8 @@
             <div class="kv" style="margin-top:10px;">
               <div><b>Kode Klaim</b><span id="codeLabel">-</span></div>
               <div><b>Tanggal</b><span id="dateLabel">-</span></div>
+              <div><b>Design</b><span id="themeLabel">-</span></div>
+              <div><b>Layout</b><span id="layoutLabel">-</span></div>
             </div>
           </div>
 
@@ -111,30 +180,74 @@
   <script>
     const $ = (id) => document.getElementById(id);
 
+    // ===== Palettes (exactly from your list) =====
+    const THEMES = {
+      purple: {
+        name: "Purple",
+        // Provided: 948FB8, D5D3E3, 564D84, 1D1A2D, F0EFF6
+        bgA: "#1D1A2D",
+        bgB: "#564D84",
+        accent: "#948FB8",
+        accent2: "#D5D3E3",
+        paper: "#F0EFF6",
+        ink: "#1D1A2D",
+        stroke: "rgba(29,26,45,0.18)",
+        subInk: "rgba(29,26,45,0.74)",
+        glow: "#948FB8",
+      },
+      blue: {
+        name: "Blue",
+        // Provided: EDF2F8, C5D5E8, 3C6496, 497AB6, 2F4E75, 142233
+        bgA: "#142233",
+        bgB: "#2F4E75",
+        accent: "#497AB6",
+        accent2: "#C5D5E8",
+        paper: "#EDF2F8",
+        ink: "#142233",
+        stroke: "rgba(20,34,51,0.18)",
+        subInk: "rgba(20,34,51,0.72)",
+        glow: "#497AB6",
+      }
+    };
+
+    const THEME_SWATCHES = {
+      purple: ["#948FB8", "#D5D3E3", "#564D84", "#1D1A2D", "#F0EFF6"],
+      blue:   ["#EDF2F8", "#C5D5E8", "#3C6496", "#497AB6", "#2F4E75", "#142233"],
+    };
+
+    function renderSwatches() {
+      const theme = $("theme").value;
+      const sw = $("swatches");
+      sw.innerHTML = "";
+      THEME_SWATCHES[theme].forEach(c => {
+        const d = document.createElement("div");
+        d.className = "sw";
+        d.style.background = c;
+        sw.appendChild(d);
+      });
+    }
+
+    // ===== Inputs =====
     function sanitizeTelegramUsername(raw) {
       let s = (raw || "").trim();
       if (s.startsWith("@")) s = s.slice(1);
       return s.replace(/\s+/g, "");
     }
-
     function normalizeNominal(raw) {
       return (raw || "").trim().replace(/\s+/g, " ");
     }
-
     function normalizeClaimCode(raw) {
       return (raw || "").trim().toUpperCase().replace(/\s+/g, "");
     }
-
     function isValidClaimCode(code) {
-      // 6-20 chars, only A-Z 0-9 and dash
       if (code.length < 6 || code.length > 20) return false;
       return /^[A-Z0-9-]+$/.test(code);
     }
-
     function formatDateId(d) {
       return d.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
     }
 
+    // ===== Text build =====
     function buildCouponText({ claimCode, sender, receiver, nominal, createdAt }) {
       return [
 `🎟️ KUPON HADIAH TPG`,
@@ -162,6 +275,7 @@
       ].join("\n");
     }
 
+    // ===== Helpers =====
     function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
       const words = text.split(" ");
       let line = "";
@@ -178,141 +292,6 @@
       }
       ctx.fillText(line.trim(), x, y);
       return y;
-    }
-
-    function drawCoupon({ claimCode, sender, receiver, nominal, createdAt }) {
-      const canvas = $("couponCanvas");
-      const ctx = canvas.getContext("2d");
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-
-      // BG gradient
-      const grad = ctx.createLinearGradient(0, 0, W, H);
-      grad.addColorStop(0, "#0e1a33");
-      grad.addColorStop(1, "#0a1020");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, W, H);
-
-      // Glow
-      ctx.globalAlpha = 0.25;
-      ctx.beginPath();
-      ctx.arc(W * 0.80, H * 0.20, 240, 0, Math.PI * 2);
-      ctx.fillStyle = "#4c8dff";
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      // Card
-      const pad = 60;
-      const cardX = pad, cardY = pad, cardW = W - pad * 2, cardH = H - pad * 2;
-
-      ctx.globalAlpha = 0.35;
-      ctx.fillStyle = "#000";
-      ctx.roundRect(cardX + 8, cardY + 10, cardW, cardH, 26);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      ctx.fillStyle = "rgba(255,255,255,0.07)";
-      ctx.strokeStyle = "rgba(255,255,255,0.15)";
-      ctx.lineWidth = 2;
-      ctx.roundRect(cardX, cardY, cardW, cardH, 26);
-      ctx.fill();
-      ctx.stroke();
-
-      // Header strip
-      ctx.fillStyle = "rgba(76,141,255,0.18)";
-      ctx.roundRect(cardX, cardY, cardW, 120, 26);
-      ctx.fill();
-
-      // Title
-      ctx.fillStyle = "#e8eefc";
-      ctx.font = "800 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("KUPON HADIAH TPG", cardX + 36, cardY + 74);
-
-      ctx.font = "600 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillStyle = "rgba(232,238,252,0.86)";
-      ctx.fillText("Kirim gambar ini ke receiver via Telegram", cardX + 36, cardY + 106);
-
-      // Claim code box
-      const boxX = cardX + 36;
-      const boxY = cardY + 150;
-      const boxW = cardW - 72;
-      const boxH = 120;
-
-      ctx.fillStyle = "rgba(0,0,0,0.25)";
-      ctx.strokeStyle = "rgba(255,255,255,0.18)";
-      ctx.lineWidth = 2;
-      ctx.roundRect(boxX, boxY, boxW, boxH, 18);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = "#a7ffcd";
-      ctx.font = "900 56px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
-      ctx.fillText(claimCode, boxX + 26, boxY + 78);
-
-      ctx.fillStyle = "rgba(232,238,252,0.78)";
-      ctx.font = "700 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("Kode Klaim (untuk klaim ke bot)", boxX + 26, boxY + 108);
-
-      // Details
-      const leftX = cardX + 36;
-      let y = boxY + boxH + 50;
-
-      ctx.fillStyle = "#e8eefc";
-      ctx.font = "800 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("Detail", leftX, y);
-
-      ctx.font = "600 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillStyle = "rgba(232,238,252,0.88)";
-      y += 48; ctx.fillText(`Sender   : @${sender}`, leftX, y);
-      y += 34; ctx.fillText(`Receiver : @${receiver}`, leftX, y);
-      y += 34; ctx.fillText(`Nominal  : ${nominal}`, leftX, y);
-
-      // Divider
-      y += 26;
-      ctx.strokeStyle = "rgba(255,255,255,0.16)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(leftX, y);
-      ctx.lineTo(cardX + cardW - 36, y);
-      ctx.stroke();
-
-      // Terms
-      y += 36;
-      ctx.fillStyle = "rgba(232,238,252,0.82)";
-      ctx.font = "600 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-
-      const t1 = "• Kupon bukan saldo/top up langsung. Hadiah diproses setelah receiver klaim ke bot.";
-      const t2 = "• Dilarang meminta data login receiver, atau memakai kupon untuk menekan/memaksa receiver.";
-      const t3 = `• Dibuat: ${createdAt}`;
-
-      y = wrapText(ctx, t1, leftX, y, cardW - 72, 26) + 30;
-      y = wrapText(ctx, t2, leftX, y, cardW - 72, 26) + 30;
-      wrapText(ctx, t3, leftX, y, cardW - 72, 26);
-
-      // Footer
-      const tag = "TPG Coupon Generator";
-      ctx.font = "700 16px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
-      ctx.fillStyle = "rgba(232,238,252,0.55)";
-      ctx.fillText(tag, cardX + cardW - 36 - ctx.measureText(tag).width, cardY + cardH - 28);
-    }
-
-    function downloadPng(canvas, filename) {
-      const a = document.createElement("a");
-      a.download = filename;
-      a.href = canvas.toDataURL("image/png");
-      a.click();
-    }
-
-    function downloadTxt(filename, text) {
-      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
     }
 
     // roundRect polyfill
@@ -334,13 +313,266 @@
       };
     }
 
+    function drawTicketCuts(ctx, x, y, w, h, radius, cutR) {
+      // Draw a rounded rect but with "ticket" semicircle cuts on left/right center
+      // We'll build path manually.
+      const cxL = x;
+      const cxR = x + w;
+      const cy = y + h / 2;
+
+      ctx.beginPath();
+      // top-left corner
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+
+      // right edge to cut start
+      ctx.lineTo(x + w, cy - cutR);
+      ctx.arc(cxR, cy, cutR, -Math.PI/2, Math.PI/2, false); // inward cut
+      ctx.lineTo(x + w, y + h - radius);
+
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+
+      // left edge to cut start
+      ctx.lineTo(x, cy + cutR);
+      ctx.arc(cxL, cy, cutR, Math.PI/2, -Math.PI/2, false); // inward cut
+      ctx.lineTo(x, y + radius);
+
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    // ===== Main draw (3 layouts) =====
+    function drawCoupon(payload) {
+      const { themeKey, layoutKey, claimCode, sender, receiver, nominal, createdAt } = payload;
+      const T = THEMES[themeKey];
+
+      const canvas = $("couponCanvas");
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // Background gradient (palette-based)
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0, T.bgA);
+      bg.addColorStop(1, T.bgB);
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Glow
+      ctx.globalAlpha = 0.25;
+      ctx.beginPath();
+      ctx.arc(W * 0.82, H * 0.22, 250, 0, Math.PI * 2);
+      ctx.fillStyle = T.glow;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      const pad = 60;
+      const cardX = pad, cardY = pad, cardW = W - pad * 2, cardH = H - pad * 2;
+
+      // Shadow
+      ctx.globalAlpha = 0.30;
+      ctx.fillStyle = "#000";
+      if (layoutKey === "ticket") {
+        drawTicketCuts(ctx, cardX + 8, cardY + 12, cardW, cardH, 26, 26);
+        ctx.fill();
+      } else {
+        ctx.roundRect(cardX + 8, cardY + 12, cardW, cardH, 26);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Card body
+      ctx.fillStyle = T.paper;
+      ctx.strokeStyle = T.stroke;
+      ctx.lineWidth = 2;
+
+      if (layoutKey === "ticket") {
+        drawTicketCuts(ctx, cardX, cardY, cardW, cardH, 26, 26);
+        ctx.fill();
+        ctx.stroke();
+
+        // dotted separator
+        ctx.save();
+        ctx.setLineDash([8, 10]);
+        ctx.strokeStyle = "rgba(20,34,51,0.18)";
+        if (themeKey === "purple") ctx.strokeStyle = "rgba(29,26,45,0.18)";
+        ctx.beginPath();
+        ctx.moveTo(cardX + 36, cardY + 160);
+        ctx.lineTo(cardX + cardW - 36, cardY + 160);
+        ctx.stroke();
+        ctx.restore();
+      } else {
+        ctx.roundRect(cardX, cardY, cardW, cardH, 26);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Accent header
+      const headerH = layoutKey === "minimal" ? 90 : 120;
+      ctx.fillStyle = T.accent;
+      ctx.globalAlpha = 0.22;
+      if (layoutKey === "ticket") {
+        drawTicketCuts(ctx, cardX, cardY, cardW, headerH, 26, 0);
+        ctx.fill();
+      } else {
+        ctx.roundRect(cardX, cardY, cardW, headerH, 26);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Title
+      ctx.fillStyle = T.ink;
+      ctx.font = "900 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("KUPON HADIAH TPG", cardX + 36, cardY + 68);
+
+      ctx.fillStyle = T.subInk;
+      ctx.font = "700 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Kirim gambar ini ke receiver via Telegram", cardX + 36, cardY + 102);
+
+      // Claim Code Box (style differs per layout)
+      const boxX = cardX + 36;
+      const boxY = cardY + headerH + 34;
+      const boxW = cardW - 72;
+      const boxH = 120;
+
+      if (layoutKey === "minimal") {
+        // Minimal: outline + subtle fill
+        ctx.fillStyle = "rgba(0,0,0,0.04)";
+        ctx.strokeStyle = T.accent;
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 3;
+        ctx.roundRect(boxX, boxY, boxW, boxH, 18);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else {
+        // Classic/Ticket: accent2 tint
+        ctx.fillStyle = T.accent2;
+        ctx.globalAlpha = 0.55;
+        ctx.strokeStyle = T.stroke;
+        ctx.lineWidth = 2;
+        ctx.roundRect(boxX, boxY, boxW, boxH, 18);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.fillStyle = T.ink;
+      ctx.font = "900 56px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
+      ctx.fillText(claimCode, boxX + 26, boxY + 78);
+
+      ctx.fillStyle = T.subInk;
+      ctx.font = "800 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Kode Klaim (untuk klaim ke bot)", boxX + 26, boxY + 108);
+
+      // Details
+      const leftX = cardX + 36;
+      let y = boxY + boxH + 52;
+
+      ctx.fillStyle = T.ink;
+      ctx.font = "900 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Detail", leftX, y);
+
+      ctx.font = "750 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = T.subInk;
+
+      y += 48; ctx.fillText(`Sender   : @${sender}`, leftX, y);
+      y += 34; ctx.fillText(`Receiver : @${receiver}`, leftX, y);
+      y += 34; ctx.fillText(`Nominal  : ${nominal}`, leftX, y);
+
+      // Divider
+      y += 24;
+      ctx.strokeStyle = T.stroke;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(leftX, y);
+      ctx.lineTo(cardX + cardW - 36, y);
+      ctx.stroke();
+
+      // Terms (short)
+      y += 34;
+      ctx.fillStyle = T.subInk;
+      ctx.font = "750 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+
+      const t1 = "• Kupon bukan saldo/top up langsung. Hadiah diproses setelah receiver klaim ke bot.";
+      const t2 = "• Dilarang meminta data login receiver, atau memakai kupon untuk menekan/memaksa receiver.";
+      const t3 = `• Dibuat: ${createdAt}`;
+
+      y = wrapText(ctx, t1, leftX, y, cardW - 72, 26) + 30;
+      y = wrapText(ctx, t2, leftX, y, cardW - 72, 26) + 30;
+      wrapText(ctx, t3, leftX, y, cardW - 72, 26);
+
+      // Footer tag
+      const tag = "TPG Coupon";
+      ctx.font = "900 16px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New'";
+      ctx.fillStyle = "rgba(20,34,51,0.50)";
+      if (themeKey === "purple") ctx.fillStyle = "rgba(29,26,45,0.52)";
+      ctx.fillText(tag, cardX + cardW - 36 - ctx.measureText(tag).width, cardY + cardH - 28);
+
+      // Small accent corner (layout dependent)
+      if (layoutKey === "classic") {
+        ctx.globalAlpha = 0.25;
+        ctx.fillStyle = T.accent;
+        ctx.beginPath();
+        ctx.moveTo(cardX + cardW, cardY + headerH);
+        ctx.lineTo(cardX + cardW, cardY + headerH + 120);
+        ctx.lineTo(cardX + cardW - 160, cardY + headerH);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // ===== Downloads =====
+    function downloadPng(canvas, filename) {
+      const a = document.createElement("a");
+      a.download = filename;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+    function downloadTxt(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // ===== State =====
     let current = null;
+
+    function updateLabels() {
+      $("codeLabel").textContent = current ? current.claimCode : "-";
+      $("dateLabel").textContent = current ? current.createdAt : "-";
+      $("themeLabel").textContent = current ? THEMES[current.themeKey].name : "-";
+      $("layoutLabel").textContent = current ? ({
+        classic: "Classic",
+        ticket: "Ticket",
+        minimal: "Minimal"
+      }[current.layoutKey]) : "-";
+    }
+
+    function redrawIfReady() {
+      if (!current) return;
+      drawCoupon(current);
+      updateLabels();
+    }
 
     $("btnGenerate").addEventListener("click", () => {
       const sender = sanitizeTelegramUsername($("sender").value);
       const receiver = sanitizeTelegramUsername($("receiver").value);
       const nominal = normalizeNominal($("nominal").value);
       const claimCode = normalizeClaimCode($("claimCode").value);
+      const themeKey = $("theme").value;
+      const layoutKey = $("layout").value;
 
       $("outputWrap").style.display = "block";
 
@@ -349,22 +581,20 @@
         current = null;
         return;
       }
-
       if (!isValidClaimCode(claimCode)) {
-        $("status").innerHTML = `<span class="err">Kode klaim tidak valid.</span> Pakai 6–20 karakter, hanya huruf/angka/strip (-).`;
+        $("status").innerHTML = `<span class="err">Kode klaim tidak valid.</span> Pakai 6–20 karakter, hanya huruf/angka/strip (-), otomatis jadi huruf besar.`;
         current = null;
         return;
       }
 
       const createdAt = formatDateId(new Date());
-      current = { claimCode, sender, receiver, nominal, createdAt };
+      current = { themeKey, layoutKey, claimCode, sender, receiver, nominal, createdAt };
 
       drawCoupon(current);
+      updateLabels();
 
       $("status").innerHTML = `<span class="ok">Kupon berhasil dibuat.</span> Kode Klaim: <b>${claimCode}</b>`;
       $("couponText").value = buildCouponText(current);
-      $("codeLabel").textContent = claimCode;
-      $("dateLabel").textContent = createdAt;
     });
 
     $("btnDownloadPng").addEventListener("click", () => {
@@ -406,12 +636,28 @@
       $("couponText").value = "";
       $("status").textContent = "";
       $("outputWrap").style.display = "none";
-      $("codeLabel").textContent = "-";
-      $("dateLabel").textContent = "-";
+      current = null;
+      updateLabels();
       const ctx = $("couponCanvas").getContext("2d");
       ctx.clearRect(0, 0, $("couponCanvas").width, $("couponCanvas").height);
-      current = null;
     });
+
+    // Live redraw when user changes theme/layout after generating
+    $("theme").addEventListener("change", () => {
+      renderSwatches();
+      if (!current) return;
+      current.themeKey = $("theme").value;
+      redrawIfReady();
+    });
+
+    $("layout").addEventListener("change", () => {
+      if (!current) return;
+      current.layoutKey = $("layout").value;
+      redrawIfReady();
+    });
+
+    // Init swatches
+    renderSwatches();
   </script>
 </body>
 </html>
